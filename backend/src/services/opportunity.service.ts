@@ -59,4 +59,21 @@ export default class OpportunityService {
 
         return
     }
+
+    async getDashboardSummary() {
+        const rawStatus = await this.opportunityRepository.getDashboardSummary();
+
+        const summary = rawStatus.map(item => ({
+            status: item.status,
+            totalQuantity: item._count.status,
+            totalValue: item._sum.value || 0
+        }))
+
+        const totalGeneral = summary.reduce((acc, curr) => acc + curr.totalValue, 0)
+
+        return {
+            summary,
+            totalGeneral
+        }
+    }
 }

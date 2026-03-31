@@ -1,6 +1,6 @@
 import type { Opportunity, OpportunityStatus, Prisma } from "../../../generated/prisma/client.js";
 import { PrismaClientKnownRequestError } from "../../../generated/prisma/internal/prismaNamespace.js";
-import type { CreateOpportunitySchema, UpdateOpportunitySchema } from "../../@types/opportunity.js";
+import type { CreateOpportunitySchema, OpportunityStats, UpdateOpportunitySchema } from "../../@types/opportunity.js";
 import prisma from "../../database/prisma.js";
 import { AppError } from "../../errors/appError.js";
 import type OpportunityRepository from "../interfaces/opportunity.interface.js";
@@ -10,7 +10,7 @@ export default class PrismaOpportunityRepository implements OpportunityRepositor
         const opportunities = await prisma.opportunity.findMany({
             where: {
                 status: filters.status,
-                clientId: filters.clientId 
+                clientId: filters.clientId
             }
         });
 
@@ -93,5 +93,19 @@ export default class PrismaOpportunityRepository implements OpportunityRepositor
 
             throw new AppError("Error to update Opportunity.", 500)
         }
+    }
+
+    async getDashboardSummary(): Promise<OpportunityStats[]> {
+        const stats = await prisma.opportunity.groupBy({
+            by: ['status'],
+            _count: {
+                status: true,
+            },
+            _sum: {
+                value: true,
+            },
+        });
+
+        return stats as OpportunityStats[];
     }
 }

@@ -35,6 +35,6 @@ model Opportunity {
   id       String            @id @default(uuid())
   clientId String
   client   Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  valor    Float
+  value    Float
   status   OpportunityStatus @default(OPEN)
 }

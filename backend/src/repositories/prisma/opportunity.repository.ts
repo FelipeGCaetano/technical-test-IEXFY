@@ -1,14 +1,20 @@
-import type { Opportunity, Prisma } from "../../../generated/prisma/client.js";
+import type { Opportunity, OpportunityStatus, Prisma } from "../../../generated/prisma/client.js";
 import { PrismaClientKnownRequestError } from "../../../generated/prisma/internal/prismaNamespace.js";
+import type { CreateOpportunitySchema, UpdateOpportunitySchema } from "../../@types/opportunity.js";
 import prisma from "../../database/prisma.js";
 import { AppError } from "../../errors/appError.js";
 import type OpportunityRepository from "../interfaces/opportunity.interface.js";
 
 export default class PrismaOpportunityRepository implements OpportunityRepository {
-    async getAll(): Promise<Opportunity[]> {
-        const opportunitys = await prisma.opportunity.findMany()
+    async getAll(filters: { status?: OpportunityStatus; clientId?: string }): Promise<Opportunity[]> {
+        const opportunities = await prisma.opportunity.findMany({
+            where: {
+                status: filters.status,
+                clientId: filters.clientId 
+            }
+        });
 
-        return opportunitys
+        return opportunities
     }
 
     async getById(id: string): Promise<Opportunity> {
@@ -23,9 +29,18 @@ export default class PrismaOpportunityRepository implements OpportunityRepositor
         return opportunity
     }
 
-    async create(data: Prisma.OpportunityCreateInput): Promise<Opportunity> {
+    async create(data: CreateOpportunitySchema): Promise<Opportunity> {
         try {
-            const opportunity = await prisma.opportunity.create({ data })
+            const opportunity = await prisma.opportunity.create({
+                data: {
+                    value: data.value,
+                    client: {
+                        connect: {
+                            id: data.clientId
+                        }
+                    }
+                }
+            })
 
             return opportunity
         } catch (err) {
@@ -39,7 +54,7 @@ export default class PrismaOpportunityRepository implements OpportunityRepositor
         }
     }
 
-    async update(id: string, data: Prisma.OpportunityUpdateInput): Promise<Opportunity> {
+    async update(id: string, data: UpdateOpportunitySchema): Promise<Opportunity> {
         try {
             const opportunityUpdated = await prisma.opportunity.update({
                 where: {

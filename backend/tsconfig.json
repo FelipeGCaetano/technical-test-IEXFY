@@ -35,5 +35,5 @@
     "moduleDetection": "force",
     "skipLibCheck": true,
   },
-  "exclude": ["node_modules", "generated/prisma"]
+  "exclude": ["node_modules", "generated/prisma", "src/http/docs"]
 }

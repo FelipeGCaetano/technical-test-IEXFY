@@ -1,0 +1,336 @@
+openapi: 3.0.0
+info:
+  title: IEXFY CRM API
+  description: API completa para gestão de clientes e oportunidades de negócio do IEXFY CRM.
+  version: 1.0.0
+servers:
+  - url: "http://localhost:8000/api"
+    description: Servidor Local de Desenvolvimento
+
+components:
+  schemas:
+    # SCHEMA DE CLIENTE
+    Client:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Felipe Gabriel"
+        cpfCnpj:
+          type: string
+          example: "504.419.748-30"
+        phone:
+          type: string
+          example: "(11) 95384-4496"
+        address:
+          type: string
+          example: "Rua marquês de santo amaro, 201 - Jandira-SP"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # SCHEMA DE OPORTUNIDADE
+    Opportunity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        value:
+          type: number
+          format: float
+          example: 1500.50
+        status:
+          type: string
+          enum: [OPEN, NEGOTIATING, WON, LOST, CANCELED]
+          example: "OPEN"
+        clientId:
+          type: string
+          format: uuid
+        client:
+          $ref: "#/components/schemas/Client"
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    # SCHEMA DE RESUMO DO DASHBOARD
+    DashboardResumo:
+      type: object
+      properties:
+        summary:
+          type: array
+          items:
+            type: object
+            properties:
+              status:
+                type: string
+                enum: [OPEN, NEGOTIATING, WON, LOST, CANCELED, TOTAL]
+              totalQuantity:
+                type: integer
+                example: 12
+              totalValue:
+                type: number
+                format: float
+                example: 25400.80
+        totalGeneral:
+          type: number
+          format: float
+          example: 150200.45
+
+    # METADADOS DE PAGINAÇÃO
+    Pagination:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          example: 1
+        totalPages:
+          type: integer
+          example: 5
+        totalItems:
+          type: integer
+          example: 48
+
+    # RESPOSTA DE ERRO PADRONIZADA
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Recurso não encontrado"
+        status:
+          type: integer
+          example: 404
+
+paths:
+  # --- ROTAS DE CLIENTES ---
+  /clients:
+    get:
+      summary: Lista clientes com paginação
+      tags: [Clientes]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: name
+          in: query
+          description: Filtro opcional por nome do cliente
+          schema: { type: string }
+      responses:
+        "200":
+          description: Lista de clientes retornada com sucesso
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Pagination"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: "#/components/schemas/Client" }
+    post:
+      summary: Cria um novo cliente
+      tags: [Clientes]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, cpfCnpj, phone, address]
+              properties:
+                name: { type: string }
+                cpfCnpj: { type: string }
+                phone: { type: string }
+                address: { type: string }
+      responses:
+        "201":
+          description: Cliente criado com sucesso
+
+  /clients/{id}:
+    get:
+      summary: Busca detalhes de um cliente específico
+      tags: [Clientes]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Dados do cliente retornados com sucesso
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Client" }
+        "404":
+          description: Cliente não encontrado
+    patch:
+      summary: Atualiza um cliente existente
+      tags: [Clientes]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                phone: { type: string }
+                address: { type: string }
+      responses:
+        "200":
+          description: Cliente atualizado
+    delete:
+      summary: Remove um cliente
+      tags: [Clientes]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Cliente removido
+
+  # --- ROTAS DE OPORTUNIDADES ---
+  /oportunidades:
+    get:
+      summary: Lista e filtra oportunidades de negócio
+      description: Retorna uma lista paginada. Suporta filtros por status e clientId.
+      tags: [Oportunidades]
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 10 }
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [OPEN, NEGOTIATING, WON, LOST, CANCELED]
+        - name: clientId
+          in: query
+          description: Filtra oportunidades de um cliente específico
+          schema: { type: string, format: uuid }
+        - name: clientDetails
+          in: query
+          description: Se true, traz o objeto 'client' aninhado
+          schema: { type: boolean, default: false }
+      responses:
+        "200":
+          description: Lista de oportunidades retornada
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/Pagination"
+                  - type: object
+                    properties:
+                      items:
+                        type: array
+                        items: { $ref: "#/components/schemas/Opportunity" }
+    post:
+      summary: Cria uma nova oportunidade
+      tags: [Oportunidades]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [clientId, value]
+              properties:
+                clientId: { type: string, format: uuid }
+                value: { type: number, minimum: 0 }
+                status:
+                  {
+                    type: string,
+                    enum: [OPEN, NEGOTIATING, WON, LOST, CANCELED],
+                    default: OPEN,
+                  }
+      responses:
+        "201":
+          description: Oportunidade criada
+
+  /oportunidades/{id}:
+    get:
+      summary: Busca detalhes de uma oportunidade
+      tags: [Oportunidades]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Detalhes da oportunidade
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Opportunity" }
+    patch:
+      summary: Atualiza uma oportunidade (valor ou status)
+      tags: [Oportunidades]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value: { type: number }
+                status:
+                  {
+                    type: string,
+                    enum: [OPEN, NEGOTIATING, WON, LOST, CANCELED],
+                  }
+                clientId: { type: string, format: uuid }
+      responses:
+        "200":
+          description: Oportunidade atualizada
+    delete:
+      summary: Exclui uma oportunidade
+      tags: [Oportunidades]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        "204":
+          description: Oportunidade excluída
+
+  # --- DASHBOARD ---
+  /dashboard/resumo:
+    get:
+      summary: Obtém métricas gerais do CRM
+      tags: [Dashboard]
+      responses:
+        "200":
+          description: Dados consolidados para os cards de resumo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardResumo"

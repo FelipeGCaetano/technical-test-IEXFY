@@ -11,11 +11,11 @@ export default class OpportunityService {
         private clientService: ClientService
     ) { }
 
-    async getAll(page?: string | number, limit?: string | number, status?: OpportunityStatus, clientId?: string): Promise<PaginationResponse<Opportunity>> {
+    async getAll(page?: string | number, limit?: string | number, status?: OpportunityStatus, clientId?: string, clientDetails?: boolean): Promise<PaginationResponse<Opportunity>> {
         page = Number(page) || 1
         limit = Number(limit) || 10
 
-        const clients = await this.opportunityRepository.getAll({ status, clientId })
+        const clients = await this.opportunityRepository.getAll({ status, clientId }, clientDetails)
 
         const paginateResponse = paginateItens<Opportunity>(page, limit, clients)
 

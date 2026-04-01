@@ -10,13 +10,14 @@ export default class OpportunityController {
     }
 
     getAll = async (request: Request, response: Response): Promise<void> => {
-        const { page, limit, status, clientId } = request.query;
+        const { page, limit, status, clientId, clientDetails } = request.query;
 
         const opportunitys = await this.opportunityService.getAll(
             page as string,
             limit as string,
             status as OpportunityStatus,
-            clientId as string
+            clientId as string,
+            Boolean(clientDetails)
         );
 
         response.status(200).json(opportunitys)

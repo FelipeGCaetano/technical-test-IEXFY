@@ -1,3 +1,4 @@
+import { Client } from "./client";
 import { OpportunityStatus } from "./dashboard";
 
 export interface Opportunity {
@@ -7,6 +8,7 @@ export interface Opportunity {
   status: OpportunityStatus;
   createdAt: string;
   updatedAt: string;
+  client: Client
 }
 
 export const OpportunityFilteredStatus = {

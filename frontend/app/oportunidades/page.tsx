@@ -4,9 +4,11 @@ import { useState, useEffect } from 'react'
 import { PaginatedResponse, Opportunity } from '@/lib/types/opportunity'
 import { OpportunityTable } from '@/components/OpportunityTable'
 import { Filter, ChevronLeft, ChevronRight } from 'lucide-react'
+import { EditOpportunityModal } from '@/components/modals/EditOpportunityModal'
 
 export default function OportunidadesPage() {
     const [data, setData] = useState<PaginatedResponse<Opportunity> | null>(null)
+    const [editingOpportunity, setEditingOpportunity] = useState<Opportunity | null>(null);
     const [isLoading, setIsLoading] = useState(true)
 
     const [status, setStatus] = useState<string>('')
@@ -19,6 +21,7 @@ export default function OportunidadesPage() {
             const params = new URLSearchParams({
                 page: page.toString(),
                 limit: limit.toString(),
+                clientDetails: "true",
                 ...(status && { status })
             })
 
@@ -66,7 +69,7 @@ export default function OportunidadesPage() {
                     <select
                         value={status}
                         onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-                        className="text-sm font-medium outline-none bg-transparent pr-4 cursor-pointer"
+                        className="text-sm font-medium text-black outline-none bg-transparent pr-4 cursor-pointer"
                     >
                         <option value="">Todos os Status</option>
                         <option value="OPEN">Aberta</option>
@@ -78,10 +81,20 @@ export default function OportunidadesPage() {
                 </div>
             </header>
 
+            {editingOpportunity && (
+                <EditOpportunityModal
+                    opportunity={editingOpportunity}
+                    isOpen={!!editingOpportunity}
+                    onClose={() => setEditingOpportunity(null)}
+                    onSuccess={fetchOpportunities}
+                />
+            )}
+
             <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
                 <OpportunityTable
                     opportunities={data?.items || []}
                     isLoading={isLoading}
+                    onEdit={(opp: Opportunity) => setEditingOpportunity(opp)}
                     onDelete={handleDeleteOpportunity}
                 />
 

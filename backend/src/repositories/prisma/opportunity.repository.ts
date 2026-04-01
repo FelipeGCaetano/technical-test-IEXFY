@@ -6,14 +6,15 @@ import { AppError } from "../../errors/appError.js";
 import type OpportunityRepository from "../interfaces/opportunity.interface.js";
 
 export default class PrismaOpportunityRepository implements OpportunityRepository {
-    async getAll(filters: { status?: OpportunityStatus; clientId?: string }): Promise<Opportunity[]> {
+    async getAll(filters: { status?: OpportunityStatus; clientId?: string }, clientDetails?: boolean): Promise<Opportunity[]> {
         const opportunities = await prisma.opportunity.findMany({
             where: {
                 status: filters.status,
                 clientId: filters.clientId
-            }
-        });
-
+            },
+            include: clientDetails ? { client: true } : undefined,
+        })
+        
         return opportunities
     }
 
@@ -34,6 +35,7 @@ export default class PrismaOpportunityRepository implements OpportunityRepositor
             const opportunity = await prisma.opportunity.create({
                 data: {
                     value: data.value,
+                    status: data.status,
                     client: {
                         connect: {
                             id: data.clientId

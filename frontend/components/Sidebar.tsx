@@ -2,11 +2,12 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Briefcase, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Briefcase, TrendingUp, Users } from 'lucide-react';
 
 const menuItems = [
     { name: 'Dashboard', href: '/', icon: LayoutDashboard },
     { name: 'Oportunidades', href: '/oportunidades', icon: Briefcase },
+    { name: 'Clientes', href: '/clients', icon: Users },
 ];
 
 export const Sidebar = () => {

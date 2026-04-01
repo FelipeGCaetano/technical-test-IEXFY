@@ -2,10 +2,11 @@ import { OpportunityStatus } from "./dashboard";
 
 export interface Opportunity {
   id: string;
-  client: { name: string };
+  clientId: string;
   value: number;
   status: OpportunityStatus;
   createdAt: string;
+  updatedAt: string;
 }
 
 export const OpportunityFilteredStatus = {
@@ -14,4 +15,11 @@ export const OpportunityFilteredStatus = {
   "WON": "Fechado",
   "LOST": "Perdido",
   "CANCELED": "Cancelado"
+}
+
+export interface PaginatedResponse<T> {
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  items: T[];
 }

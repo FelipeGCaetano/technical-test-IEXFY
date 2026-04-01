@@ -1,5 +1,8 @@
-import { Geist, Geist_Mono } from "next/font/google";
+'use client'
+
+import { Geist, Geist_Mono } from "next/font/google"
 import "../styles/globals.css"
+import { Sidebar } from "@/components/Sidebar"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,14 +17,23 @@ const geistMono = Geist_Mono({
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-br"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="h-full flex overflow-hidden">
+        <Sidebar />
+
+        <main
+          className="flex-1 flex flex-col overflow-y-auto 
+                     bg-slate-50 p-6 md:p-10"
+        >
+          {children}
+        </main>
+      </body>
     </html>
   );
 }

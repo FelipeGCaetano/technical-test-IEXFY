@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { DashboardSummary } from '@/components/DashboardSummary'
-import { Loader2, AlertCircle, TrendingUp, Notebook } from 'lucide-react'
+import { Loader2, AlertCircle, TrendingUp, Notebook, ChartLine } from 'lucide-react'
 import { DashboardData } from '@/lib/types/dashboard'
 import { SummaryCard } from '@/components/SummaryCard'
 import { OpportunityFilteredStatus } from '@/lib/types/opportunity'
@@ -68,7 +68,7 @@ export default function Home() {
         ) : (
           <div className='flex flex-row gap-4'>
             {data?.summary?.map((card, index) => (
-              <SummaryCard label={OpportunityFilteredStatus[card.status]} value={card.totalValue} quantity={card.totalQuantity} icon={Notebook} colorClass='text-red-500' size="w-1/5" isLoading={false} key={index} />
+              <SummaryCard label={OpportunityFilteredStatus[card.status]} value={card.totalValue} quantity={card.totalQuantity} icon={ChartLine} colorClass='text-indigo-600' size="w-1/5" isLoading={false} key={index} />
             ))}
           </div>
         )

@@ -29,12 +29,16 @@ model Client {
   phone         String
   address       String
   opportunities Opportunity[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @default(now())
 }
 
 model Opportunity {
-  id       String            @id @default(uuid())
-  clientId String
-  client   Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  value    Float
-  status   OpportunityStatus @default(OPEN)
+  id        String            @id @default(uuid())
+  clientId  String
+  client    Client            @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  value     Float
+  status    OpportunityStatus @default(OPEN)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @default(now())
 }

@@ -1,22 +1,18 @@
 import type { Request, Response, NextFunction } from "express";
 
-export function loggerMiddleware(req: Request, res: Response, next: NextFunction) {
-    const start = Date.now();
+export function loggerMiddleware(request: Request, response: Response, next: NextFunction) {
+    const start = Date.now()
 
-    res.on('finish', () => {
-        const duration = Date.now() - start;
-        const { method, originalUrl } = req;
-        const { statusCode } = res;
+    response.on('finish', () => {
+        const duration = Date.now() - start
+        const { method, originalUrl } = request
+        const { statusCode } = response
 
-        const timestamp = new Date().toISOString();
-        const logMessage = `[${timestamp}] ${method} ${originalUrl} ${statusCode} - ${duration}ms`;
+        const timestamp = new Date().toISOString()
+        const logMessage = `[${timestamp}] ${method} ${originalUrl} ${statusCode} - ${duration}ms`
 
-        if (statusCode >= 400) {
-            console.error(`❌ ${logMessage}`);
-        } else {
-            console.log(`✅ ${logMessage}`);
-        }
-    });
+        console.error(`${logMessage}`)
+    })
 
-    next(); 
+    next()
 }

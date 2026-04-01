@@ -19,5 +19,6 @@ export interface SummaryCardProps {
     quantity: number;
     icon: LucideIcon;
     colorClass: string;
+    size?: string;
     isLoading?: boolean;
 }

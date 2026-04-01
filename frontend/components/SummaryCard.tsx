@@ -1,6 +1,6 @@
 import { SummaryCardProps } from "@/lib/types/dashboard"
 
-export const SummaryCard = ({ label, value, quantity, icon: Icon, colorClass, isLoading }: SummaryCardProps) => {
+export const SummaryCard = ({ label, value, quantity, icon: Icon, colorClass, isLoading, size }: SummaryCardProps) => {
     if (isLoading) {
         return (
             <div className="bg-white p-6 rounded-xl border border-gray-100 animate-pulse">
@@ -11,9 +11,9 @@ export const SummaryCard = ({ label, value, quantity, icon: Icon, colorClass, is
     }
 
     return (
-        <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm transition-transform hover:scale-105">
+        <div className={`bg-white p-6 rounded-xl border border-gray-200 shadow-sm transition-transform hover:scale-105 mb-4 ${size}`}>
             <div className="flex items-center justify-between mb-4">
-                <span className="text-sm font-medium text-gray-500 uppercase">{label}</span>
+                <span className="text-sm font-medium text-gray-500">{label}</span>
                 <Icon className={colorClass} size={24} />
             </div>
             <div className="text-2xl font-bold text-gray-900">

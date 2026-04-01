@@ -79,9 +79,6 @@ export const OpportunityTable = ({ opportunities, isLoading, onDelete, onEdit }:
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex justify-center gap-3">
-                                        <button className="text-slate-600 hover:text-indigo-600 transition-colors" title="Ver Detalhes">
-                                            <Eye size={18} />
-                                        </button>
                                         <button
                                             onClick={() => onEdit(opp)}
                                             className="text-slate-600 hover:text-blue-600 transition-colors"

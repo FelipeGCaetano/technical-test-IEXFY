@@ -116,7 +116,7 @@ export const EditOpportunityModal = ({ opportunity, isOpen, onClose, onSuccess }
                         >
                             <option value="OPEN">Aberta</option>
                             <option value="NEGOTIATING">Negociando</option>
-                            <option value="WON">Ganha</option>
+                            <option value="WON">Fechado</option>
                             <option value="LOST">Perdida</option>
                             <option value="CANCELED">Cancelada</option>
                         </select>

@@ -1,13 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+type RouteContext = {
+  params: Promise<{ id: string }>
+}
+
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: RouteContext
 ) {
+  const { id } = await context.params
+
   const backendUrl = process.env.BACKEND_URL
   const basePath = process.env.BASE_PATH
-  const { id } = await params
-  console.log(id)
+
   try {
     const response = await fetch(`${backendUrl}${basePath}/oportunidades/${id}`, {
       method: 'DELETE',
@@ -24,12 +29,12 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  context: RouteContext
 ) {
-  const { id } = await params
+  const { id } = await context.params
   const body = await request.json()
-
+  
   const backendUrl = process.env.BACKEND_URL
   const basePath = process.env.BASE_PATH
 
